@@ -1,0 +1,30 @@
+# BEGIN_KITTY_THEME
+# Monokai
+include current-theme.conf
+# END_KITTY_THEME
+
+# 基本配置
+font_size 16.0
+background_opacity 100
+
+# 窗口记忆
+remember_window_size yes
+
+# 窗口边距
+window_padding_width 10
+
+# 窗口分割
+map super+shift+- launch --location=hsplit
+map super+shift+\ launch --location=vsplit
+map super+w close_window
+# 移动
+map super+[ previous_window
+map super+] next_window
+
+
+# BEGIN_KITTY_FONTS
+font_family      MapleMono
+italic_font      auto
+bold_font        auto
+bold_italic_font auto
+# END_KITTY_FONTS
