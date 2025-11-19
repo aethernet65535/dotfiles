@@ -1,0 +1,256 @@
+[{
+    "height": 40,
+    "spacing": 5, 
+
+    "modules-left": [
+        "clock",
+        "custom/date",
+        "hyprland/workspaces",
+	"mpris"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "wireplumber",
+        "group/cpuram",
+        "group/system"
+    ],
+
+
+
+    "custom/openbracket": {
+        "format": "[",
+        "tooltip": false
+    },
+    "custom/closebracket": {
+        "format": "]",
+        "tooltip": false
+    },    
+    "custom/split": {
+      "format": "|",
+      "tooltip": false
+    },
+
+
+
+    "hyprland/workspaces": {
+        "all-outputs": true,
+        "warp-on-scroll": false,
+        "enable-bar-scroll": true,
+        "disable-scroll-wraparound": true,
+        "active-only": false,
+        "format": "{icon}",
+        "format-icons": {
+            "1": "一",
+            "2": "二",
+            "3": "三",
+            "4": "四",
+            "5": "五",
+            "6": "六",
+            "7": "七",
+            "8": "八",
+            "9": "九",
+            "10": "十",
+        }
+    },
+
+    "mpris": {
+        "interval": 1,
+        "format": "[  {player_icon}  {dynamic}  ]",
+        "format-paused": "[  {status_icon} {title}  ]",
+        "player-icons": {
+            "default": "",
+            "firefox": "",
+            "mpv": "󰐹",
+            "spotify": "",
+        },
+        "status-icons": {
+            "paused": "󰏤",
+            "playing": "",
+            "stopped": "",
+        },
+        "dynamic-order": ["title"],
+        "max-length": 50,
+    },
+
+
+    "group/windows": {
+        "orientation":"horizontal",
+        "modules":[
+            "custom/openbracket",
+            "hyprland/window",
+            "custom/closebracket"
+        ]
+    },
+    "hyprland/window": {
+        "format": "{title}", 
+        "max-length": 50,
+        "min-length": 0,
+        "all-outputs": true
+    },
+
+
+
+
+    "group/cpuram": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/openbracket",
+            "cpu",
+            "custom/split",
+            "memory",
+            "custom/closebracket"
+        ]
+    },
+    "cpu": {
+        "format": "CPU:{usage}%",
+        "tooltip": false,
+        "interval": 2,
+    },
+    "memory":{
+        "format": "RAM:{}%",
+        "tooltip": false,
+        "interval": 2,
+    },
+
+    "group/brightvol": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/openbracket",
+            "custom/split",
+            "wireplumber",
+            "custom/closebracket"
+        ]
+    },
+    "wireplumber": {
+        "scroll-step": 5,
+        "format": "{icon}{volume}%",
+        "format-disabled": "X",
+        "format-bluetooth": "{icon}{volume}% ",
+        "format-bluetooth-muted": " {icon}",
+        "format-muted": " ",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [" :", " :", " :"]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "pavucontrol"
+    },
+
+
+
+    "group/system": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/openbracket",
+            "network",
+            "bluetooth",
+            "custom/clipboard",
+            "custom/swaync",
+            "battery",
+            "custom/closebracket"
+        ]
+    },
+    "clock": {
+        "format": "{:%I:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "onclick" : "kalender"
+    },
+    "custom/date": {
+        "format": "{}",
+        "exec": "date '+%a %Y-%m-%d'",
+        "interval": 60,
+        "tooltip": false,
+        "on-click": "kalender"
+    },
+
+    "custom/clipboard": {
+        "format": "",
+        "tooltip": false,
+        "on-click": "~/.config/waybar/scripts/clipboard_menu.sh"
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-full": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-plugged": "  {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "on-click": "wlogout"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        }
+    },
+    "custom/swaync": {
+      "format": "",
+      "exec": "swaync-client -swb",
+      "on-click": "swaync-client --toggle-panel",
+      "interval": 0
+    },
+
+	"network": {
+	    "format": "{ifname}",
+	    "format-wifi": "{icon}",
+	    "format-ethernet": "󰌘",
+	    "format-disconnected": "󰌙",
+	    "tooltip-format": "{ipaddr}  {bandwidthUpBits}  {bandwidthDownBits}",
+	    "format-linked": "󰈁 {ifname} (No IP)",
+	    "tooltip-format-wifi": "{essid} {icon} {signalStrength}%",
+	    "tooltip-format-ethernet": "{ifname} 󰌘",
+	    "tooltip-format-disconnected": "󰌙 Disconnected",
+	    "max-length": 30,
+	    "format-icons": [
+	        "󰤯", "󰤟", "󰤢", "󰤥", "󰤨"
+            ],
+	    "on-click": "kitty -e nmtui"
+},
+
+    "bluetooth": {
+    	"format": "  ",
+	    "format-disabled": "󰂳",
+	    "format-connected": "󰂱 {num_connections}",
+	    "tooltip-format": " {device_alias}",
+	    "tooltip-format-connected": "{device_enumerate}",
+	    "tooltip-format-enumerate-connected": " {device_alias} 󰂄{device_battery_percentage}%",
+	    "tooltip": true,
+	    "on-click": "blueman-manager",
+    },
+
+    "group/clock": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/openbracket",
+            "clock",
+            "custom/closebracket"
+        ]
+    },
+    "custom/cava": {
+        "exec": "~/.config/waybar/scripts/cava_wrapper.sh",
+        "format": "♪ {}",
+        "restart-interval": 1,
+        "max-length": 50,
+        "on-click": "pkill cava"
+    },
+    "tray": {
+        "icon-size": 14,
+        "spacing": 10
+    },
+    "custom/notifications": {
+    "format": "  ",
+    "tooltip": false,
+    "on-click": "~/.config/waybar/scripts/notification_center.sh"
+    }
+}]
