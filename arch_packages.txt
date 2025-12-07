@@ -1,0 +1,87 @@
+##############
+### PACMAN ###
+##############
+
+### HARDWARE ###
+# NVIDIA
+nvidia-open
+
+### IMPORTANT ###
+archlinux-keyring
+base
+base-devel
+linux
+linux-firmware
+btrfs-progs
+
+
+### CLI ###
+# UTILS
+7zip
+blueman
+brightnessctl
+ffmpeg
+networkmanager
+openssh
+playerctl
+syncthing
+timeshift
+
+# CODE
+make
+clang
+ctags
+gcc
+gdb
+git
+nvim
+podman
+qemu-full
+
+
+
+### DESKTOP ###
+# DESKTOP-UTILS
+kitty
+
+# DESKTOP
+hyprland
+hyprpaper
+warbar
+swaync
+
+# GUI-ONLY
+firefox
+spotify
+spicetify-cli
+steam
+telegram-desktop
+thunderbird
+
+# GAME
+gameconqueror
+
+# INPUT METHOD
+fcitx5
+fcitx5-chinese-addons
+
+# MEDIA
+nomacs
+
+# OTHERS
+btop
+cava
+htop
+swaync
+
+### KERNEL ###
+linux
+
+
+###########
+### AUR ###
+###########
+
+# FONTS
+apple-fonts
+maplemono
