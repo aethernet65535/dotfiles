@@ -5,6 +5,12 @@
 ### HARDWARE ###
 # NVIDIA
 nvidia-open
+amd-ucode
+
+### KEYBOARD ###
+# TAPDANCE
+interception-tools
+interception-dual-function-keys
 
 ### IMPORTANT ###
 archlinux-keyring
