@@ -1,0 +1,10 @@
+# /home/aethernet/.dual-function-keys.yaml
+
+TIMING:
+  TAP_MILLISEC: 300
+  DOUBLE_TAP_MILLISEC: 0
+
+MAPPINGS:
+  - KEY: KEY_LEFTCTRL
+    TAP: KEY_ESC
+    HOLD: KEY_LEFTCTRL
