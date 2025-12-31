@@ -3,7 +3,7 @@
 #################
 #
 stty -ixon
-export PS1='%~: >'
+export PS1='%~: >' 
 export EDITOR=nvim
 
 ################
@@ -18,19 +18,26 @@ function yy() {
 	rm -f -- "$tmp"
 }
 
+if [ "$TERM" = "xterm-kitty" ]; then
+    export TERM=xterm-256color
+    printf "\e]11;#2C2A24\a"
+fi
+
 ##############
 ### define ###
 ##############
 # path
 export PATH_65535="$HOME/Documents/65535"
 export WORKSPACE="$PATH_65535/workspace"
-export DOTFILES="$PATH_65535/dotfile"
+export DOTFILES="$WORKSPACE/dotfiles"
 export ZSH="$HOME/.zshrc"
 export BLOG="$WORKSPACE/blog"
 export MIZUKI="$BLOG/mizuki"
 export POST="$MIZUKI/src/content/posts"
 export LINUX="$WORKSPACE/linux"
-export LINUX_DOC="$PATH_65535/book/linux_documentation"
+export LINUX_KERNEL="$LINUX/kernel"
+export LINUX_MAINLINE="$LINUX_KERNEL/linux_mainline"
+export LINUX_STABLE="$LINUX_KERNEL/linux_stable"
 export ANDROID="$WORKSPACE/android_kernel"
 export HYPRLAND="$HOME/.config/hypr"
 
@@ -61,12 +68,18 @@ alias laptopmode='~/.config/hypr/workspace_mode/switch_workspace.sh laptop'
 
 # Teleport
 alias cdwork='cd $WORKSPACE'
+alias cddot='cd $DOTFILES'
 alias cdblog='cd $BLOG'
 alias cdmizuki='cd $MIZUKI'
 alias cdpost='cd $POST'
 alias cdlinux='cd $LINUX'
-alias cdread='cd $LINUX/linux_source_code'
-alias cdbusy='cd $LINUX/busybox/busybox-1.37.0'
+alias cdmain='cd $LINUX_MAINLINE'
+alias cdstable='cd $LINUX_STABLE'
+alias cduser='cd $LINUX/user'
+alias cdandroid='cd $ANDROID'
+alias cdztc='cd $ANDROID/ztc_kernel/android_gki_kernel_5.10_common'
+alias cdmelt='cd $ANDROID/melt_kernel/android_kernel_xiaomi_marble'
+alias cdbusy='cd $WORKSPACE/busybox/busybox-1.37.0'
 alias cdman='cd $LINUX_DOC'
 alias cdxv6='cd "$XV6"'
 alias myxv6='cd "$MYXV6"'
@@ -81,32 +94,23 @@ alias nvimconf='$EDITOR ~/.config/nvim/'
 alias sudonvim='sudo -E $EDITOR'
 alias ls1='ls -1'
 alias lsl='ls -l'
-alias ls='ls -a'
 
-# Podman
-alias docker='podman'
+# systemd-nspawn
+alias debianboot='sudo systemd-nspawn -D /mnt/debian --background=40'
 
+# Docker/Podman
 alias builddoc='podman build -t xv6-2020-env .'
 alias rundoc='podman run -it -p 25000:25000 -v "$PWD/xv6-2020:/xv6-2020" xv6-2020-env'
 alias runsol='podman run -it -p 25000:25000 -v "$PWD/xv6-labs-2020:/xv6-2020" xv6-2020-env'
-
-alias androidbuild='podman build -t android .'
-alias androidrun='podman run -it -v "/home/aethernet/Documents/65535/workspace/android_kernel:/android_kernel" -w /android_kernel android'
 
 alias busybuild='podman build -t busybox .'
 alias busyrun='podman run -it -v "$WORKSPACE/linux/busybox:/busybox" -w /busybox busybox'
 
 alias gnubuild='podman build -t gnulinux .'
-alias gnurun='podman run -it -v "$LINUX/podman:/podman" -w /podman gnulinux'
+alias gnurun='podman run -it -v "$LINUX:/linux" -w /linux gnulinux'
 
-alias driverbuild='podman build -t driver .'
-alias driverrun='podman run -it -v "$WORKSPACE/linux/modules/driver:/driver" -w . driver'
-
-# zola
-alias zolabuild='zola build --force --output-dir "$BLOG/docs"'
-# gcc
-alias kawaii='cd /home/Documents/65535/dotfile/kawaii-gcc/'
-alias gcctran='msgfmt ~/Documents/65535/dotfile/kawaii-gcc/src/zh_CN-kawaii-patch.po -o ~/Documents/65535/dotfile/kawaii-gcc/gcc.mo && sudo cp ~/Documents/65535/dotfile/kawaii-gcc/gcc.mo /usr/share/locale/en/LC_MESSAGES/gcc.mo'
+alias workbuild='podman build -t workspace .'
+alias workrun='podman run -it -v "$WORKSPACE:/workspace" -w . workspace'
 
 ##############
 #### BIG #####
@@ -126,6 +130,8 @@ SAVEHIST=10000
 HISTSIZE=10000
 setopt APPENDHISTORY
 setopt SHAREHISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
 
 ###########
 ### env ###
