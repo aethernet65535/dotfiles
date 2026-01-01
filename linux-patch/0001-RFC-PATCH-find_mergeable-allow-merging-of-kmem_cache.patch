@@ -1,0 +1,96 @@
+From fc3e37ebc6139a072ae7d7724c9e2a33582efc1b Mon Sep 17 00:00:00 2001
+From: aethernet <aethernet65535@gmail.com>
+Date: Thu, 1 Jan 2026 02:00:11 +0800
+Subject: [PATCH] [RFC PATCH] find_mergeable: allow merging of kmem_caches with
+ identical constructors
+
+Currently, kmem_cache merging is prohibited if a constructor (ctor) is
+provided, even if two caches share the exact same constructor function
+and parameters. This restriction is somewhat counter-intuitive when
+the intention of merging is to reduce slab fragmentation and overhead.
+
+This patch allows merging of kmem_caches with identical constructors by:
+
+1. Updating find_mergeable() to account for the internal alignment
+   overhead (sizeof(void *)) that calculate_sizes() adds when a ctor
+   is present. This ensures size parity during the merge check.
+2. Modifying slab_unmergeable() to allow merging if the existing
+   cache's constructor matches the requested one.
+
+Note: This is an experimental change. While basic alloc/free tests
+pass, further investigation is needed regarding its impact on
+subsystem isolation and slab debugging (e.g., SLUB_DEBUG).
+
+Signed-off-by: aethernet <aethernet65535@gmail.com>
+---
+ mm/slab.h        | 2 +-
+ mm/slab_common.c | 8 ++++----
+ mm/slub.c        | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/mm/slab.h b/mm/slab.h
+index e767aa7e91b0..361fef8146cf 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -399,7 +399,7 @@ extern void create_boot_cache(struct kmem_cache *, const char *name,
+ 			unsigned int size, slab_flags_t flags,
+ 			unsigned int useroffset, unsigned int usersize);
+ 
+-int slab_unmergeable(struct kmem_cache *s);
++int slab_unmergeable(struct kmem_cache *s, void (*ctor)(void *));
+ struct kmem_cache *find_mergeable(unsigned size, unsigned align,
+ 		slab_flags_t flags, const char *name, void (*ctor)(void *));
+ struct kmem_cache *
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index eed7ea556cb1..edb601c19c43 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -150,12 +150,12 @@ static unsigned int calculate_alignment(slab_flags_t flags,
+ /*
+  * Find a mergeable slab cache
+  */
+-int slab_unmergeable(struct kmem_cache *s)
++int slab_unmergeable(struct kmem_cache *s, void (*ctor)(void *))
+ {
+ 	if (slab_nomerge || (s->flags & SLAB_NEVER_MERGE))
+ 		return 1;
+ 
+-	if (s->ctor)
++	if (s->ctor && likely(s->ctor != ctor))
+ 		return 1;
+ 
+ #ifdef CONFIG_HARDENED_USERCOPY
+@@ -184,7 +184,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+ 		return NULL;
+ 
+ 	if (ctor)
+-		return NULL;
++		size += sizeof(void *);
+ 
+ 	flags = kmem_cache_flags(flags, name);
+ 
+@@ -196,7 +196,7 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
+ 	size = ALIGN(size, align);
+ 
+ 	list_for_each_entry_reverse(s, &slab_caches, list) {
+-		if (slab_unmergeable(s))
++		if (slab_unmergeable(s, ctor))
+ 			continue;
+ 
+ 		if (size > s->size)
+diff --git a/mm/slub.c b/mm/slub.c
+index 861592ac5425..7c5faaf0bb2f 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -9734,7 +9734,7 @@ static int sysfs_slab_add(struct kmem_cache *s)
+ 	int err;
+ 	const char *name;
+ 	struct kset *kset = cache_kset(s);
+-	int unmergeable = slab_unmergeable(s);
++	int unmergeable = slab_unmergeable(s, NULL);
+ 
+ 	if (!unmergeable && disable_higher_order_debug &&
+ 			(slub_debug & DEBUG_METADATA_FLAGS))
+-- 
+2.52.0
+
