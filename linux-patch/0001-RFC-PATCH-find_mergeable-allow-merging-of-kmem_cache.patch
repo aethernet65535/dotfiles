@@ -1,27 +1,33 @@
 From fc3e37ebc6139a072ae7d7724c9e2a33582efc1b Mon Sep 17 00:00:00 2001
 From: aethernet <aethernet65535@gmail.com>
 Date: Thu, 1 Jan 2026 02:00:11 +0800
-Subject: [PATCH] mm/slab: allow merging of kmem_caches with identical constructors
+Subject: [RFC PATCH] mm/slab: allow merging of caches with identical constructors
 
-Currently, kmem_cache merging is unconditionally prohibited if a constructor
-(ctor) is provided. However, caches that share the exact same constructor 
-function and parameters are functionally compatible for merging, which 
-could further reduce slab fragmentation and metadata overhead.
+This is an experimental patch to allow merging of slab caches
+that share the exact same constructor function. Currently, the
+kernel prevents merging any caches with ctors, which might lead to
+unnecessary duplication when the same initialization logic is used
+across different caches.
 
-This patch enables merging for caches with matching constructors:
+Logic changes:
+- Pass 'ctor' to slab_unmergeable() to ensure only
+  caches with matching constructors are considered for merging.
+- Adjust 'size' in find_mergeable() by sizeof(void *) when a ctor is
+  present to stay consistent with the layout logic in calculate_sizes().
 
-1.  In find_mergeable(), we now account for the internal padding added by 
-    calculate_sizes() when a ctor is present (typically sizeof(void *)). 
-    By adjusting the search 'size', we ensure it correctly matches the 
-    's->size' of existing caches that were already adjusted for their ctors.
-2.  Updated slab_unmergeable() to allow a match if the existing cache's 
-    constructor is identical to the requested one.
-3.  Used likely() for the constructor mismatch check, as in most merging 
-    scenarios, constructors are either both NULL or different.
+Test Status:
+- Passed basic allocation and deallocation tests.
+- Passed most common slab flag compatibility tests.
 
-Note: This is an experimental optimization. While initial testing shows 
-no regressions in basic allocation/deallocation, the implications for 
-SLUB_DEBUG and subsystem-specific isolation need further validation.
+NOTE: This is an ongoing experiment by a beginner. More rigorous
+stress testing is needed to identify potential edge cases or
+regressions.
+
+Disclaimer: This patch is for personal testing and experimental
+purposes only. It is not intended for upstream submission (LKML).
+The primary goal is to evaluate if allowing ctor-based merging
+introduces new instabilities that weren't present in the original
+slab logic.
 
 Signed-off-by: aethernet <aethernet65535@gmail.com>
 ---
