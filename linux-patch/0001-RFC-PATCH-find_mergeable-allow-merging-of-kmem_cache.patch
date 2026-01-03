@@ -1,25 +1,27 @@
 From fc3e37ebc6139a072ae7d7724c9e2a33582efc1b Mon Sep 17 00:00:00 2001
 From: aethernet <aethernet65535@gmail.com>
 Date: Thu, 1 Jan 2026 02:00:11 +0800
-Subject: [PATCH] [RFC PATCH] find_mergeable: allow merging of kmem_caches with
- identical constructors
+Subject: [PATCH] mm/slab: allow merging of kmem_caches with identical constructors
 
-Currently, kmem_cache merging is prohibited if a constructor (ctor) is
-provided, even if two caches share the exact same constructor function
-and parameters. This restriction is somewhat counter-intuitive when
-the intention of merging is to reduce slab fragmentation and overhead.
+Currently, kmem_cache merging is unconditionally prohibited if a constructor
+(ctor) is provided. However, caches that share the exact same constructor 
+function and parameters are functionally compatible for merging, which 
+could further reduce slab fragmentation and metadata overhead.
 
-This patch allows merging of kmem_caches with identical constructors by:
+This patch enables merging for caches with matching constructors:
 
-1. Updating find_mergeable() to account for the internal alignment
-   overhead (sizeof(void *)) that calculate_sizes() adds when a ctor
-   is present. This ensures size parity during the merge check.
-2. Modifying slab_unmergeable() to allow merging if the existing
-   cache's constructor matches the requested one.
+1.  In find_mergeable(), we now account for the internal padding added by 
+    calculate_sizes() when a ctor is present (typically sizeof(void *)). 
+    By adjusting the search 'size', we ensure it correctly matches the 
+    's->size' of existing caches that were already adjusted for their ctors.
+2.  Updated slab_unmergeable() to allow a match if the existing cache's 
+    constructor is identical to the requested one.
+3.  Used likely() for the constructor mismatch check, as in most merging 
+    scenarios, constructors are either both NULL or different.
 
-Note: This is an experimental change. While basic alloc/free tests
-pass, further investigation is needed regarding its impact on
-subsystem isolation and slab debugging (e.g., SLUB_DEBUG).
+Note: This is an experimental optimization. While initial testing shows 
+no regressions in basic allocation/deallocation, the implications for 
+SLUB_DEBUG and subsystem-specific isolation need further validation.
 
 Signed-off-by: aethernet <aethernet65535@gmail.com>
 ---
