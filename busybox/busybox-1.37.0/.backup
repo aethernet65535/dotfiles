@@ -1,0 +1,9 @@
+# QEMU_ARGS=(
+#    -m 4G
+#    -kernel /home/aethernet/Documents/65535/workspace/android_kernel/melt_kernel/android_kernel_xiaomi_marble/out/arch/arm64/boot/Image
+#    -initrd rootfs.img.gz
+#    -append "root=/dev/ram0 init=/init console=ttyS0"
+#    -serial mon:stdio
+#    -nographic
+#)
+

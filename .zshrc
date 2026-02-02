@@ -2,12 +2,24 @@
 ### zshconfig ###
 #################
 #
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+
 stty -ixon
-export PS1='%~: >' 
 export EDITOR=nvim
 
+# --- For VNG ---
+kernel_release=$(uname -r)
+
+if [[ $kernel_release == *-rc* ]]; then
+    PS1='$ '
+else
+    PS1='%~: >'
+fi
+
+
 ################
-### function ###
+### FUNCTION ###
 ################
 
 function yy() {
@@ -24,24 +36,39 @@ if [ "$TERM" = "xterm-kitty" ]; then
 fi
 
 ##############
-### define ###
+### DEFINE ###
 ##############
-# path
-export PATH_65535="$HOME/Documents/65535"
+# Global
+export PATH_65535="$HOME/65535"
 export WORKSPACE="$PATH_65535/workspace"
-export DOTFILES="$WORKSPACE/dotfiles"
+
+# Env
+export DOTFILES="$WORKSPACE/env/dotfiles"
+export HYPRLAND="$HOME/.config/hypr"
 export ZSH="$HOME/.zshrc"
-export BLOG="$WORKSPACE/blog"
+
+# Personal
+export BLOG="$WORKSPACE/src/blog"
 export MIZUKI="$BLOG/mizuki"
 export POST="$MIZUKI/src/content/posts"
-export LINUX="$WORKSPACE/linux"
+
+# Oss
+export OSS="$WORKSPACE/oss"
+## Linux
+export LINUX="$OSS/linux"
 export LINUX_KERNEL="$LINUX/kernel"
 export LINUX_MAINLINE="$LINUX_KERNEL/linux_mainline"
 export LINUX_STABLE="$LINUX_KERNEL/linux_stable"
-export ANDROID="$WORKSPACE/android_kernel"
-export HYPRLAND="$HOME/.config/hypr"
+# Android
+export ANDROID="$OSS/android_kernel"
+# Busybox
+export BUSYBOX="$OSS/busybox"
+# Glibc
+export GLIBC="$OSS/glibc"
+# Musl
+export MUSL="$OSS/musl"
 
-# lab path
+# lab
 export RCORE="$WORKSPACE/rcore/rCore-Tutorial-v3"
 export XV6="$WORKSPACE/docker_xv6_2020"
 export MYXV6="$XV6/xv6-2020"
@@ -67,20 +94,27 @@ alias paclog='cat /var/log/pacman.log'
 alias laptopmode='~/.config/hypr/workspace_mode/switch_workspace.sh laptop'
 
 # Teleport
+## Global
 alias cdwork='cd $WORKSPACE'
 alias cddot='cd $DOTFILES'
+## Blog
 alias cdblog='cd $BLOG'
 alias cdmizuki='cd $MIZUKI'
 alias cdpost='cd $POST'
+## CGDB
+alias cdcgdb='cd $WORKSPACE/src/cgdb'
+## Linux
 alias cdlinux='cd $LINUX'
 alias cdmain='cd $LINUX_MAINLINE'
 alias cdstable='cd $LINUX_STABLE'
 alias cduser='cd $LINUX/user'
+## Android
 alias cdandroid='cd $ANDROID'
 alias cdztc='cd $ANDROID/ztc_kernel/android_gki_kernel_5.10_common'
 alias cdmelt='cd $ANDROID/melt_kernel/android_kernel_xiaomi_marble'
-alias cdbusy='cd $WORKSPACE/busybox/busybox-1.37.0'
-alias cdman='cd $LINUX_DOC'
+## Busybox
+alias cdbusy='cd $BUSYBOX/busybox-1.37.0'
+## Labs
 alias cdxv6='cd "$XV6"'
 alias myxv6='cd "$MYXV6"'
 alias cdrcore='cd "$RCORE"'
@@ -118,8 +152,33 @@ alias workrun='podman run -it -v "$WORKSPACE:/workspace" -w . workspace'
 alias gnubusy='./run.sh'
 alias gnubusyd='./run.sh d'
 
-alias linuxbuild='	export ARCH=x86 &&
-			make x86_64_defconfig CC=clang'
+alias linuxbuild='export ARCH=x86 && make x86_64_defconfig'
+
+alias ctagslinux='ctags -R \
+                    --exclude=arch/alpha \
+                    --exclude=arch/arc \
+                    --exclude=arch/arm \
+                    --exclude=arch/arm64 \
+                    --exclude=arch/csky \
+                    --exclude=arch/hexagon \
+                    --exclude=arch/Kconfig \
+                    --exclude=arch/loongarch \
+                    --exclude=arch/m68k \
+                    --exclude=arch/microblaze \
+                    --exclude=arch/mips \
+                    --exclude=arch/nios2 \
+                    --exclude=arch/openrisc \
+                    --exclude=arch/parisc \
+                    --exclude=arch/powerpc \
+                    --exclude=arch/riscv \
+                    --exclude=arch/s390 \
+                    --exclude=arch/sh \
+                    --exclude=arch/sparc \
+                    --exclude=arch/um \
+                    --exclude=arch/xtensa \
+                    --exclude=mm/nommu.c \
+                    --exclude=.virtme_mods'
+
 
 ##############
 ### config ###
@@ -139,3 +198,4 @@ setopt HIST_IGNORE_ALL_DUPS
 export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
+export PATH=/home/aethernet/.local/bin:/home/aethernet/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/android-sdk/platform-tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin

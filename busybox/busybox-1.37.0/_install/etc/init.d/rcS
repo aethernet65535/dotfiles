@@ -1,0 +1,9 @@
+echo -e "welcome to mini linux"
+
+/bin/mount -a
+echo -e "remounting the root filesystem"
+mount -o remount,rw /
+
+mkdir -p /dev/pts
+mount -t devpts devpts /dev/pts
+mdev -s

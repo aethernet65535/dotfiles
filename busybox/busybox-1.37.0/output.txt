@@ -1,0 +1,8 @@
+c[?7l[2J[0mSeaBIOS (version Arch Linux 1.17.0-1-1)
+
+
+iPXE (http://ipxe.org) 00:03.0 C900 PCI2.10 PnP PMM+06FD3E90+06F33E90 C900
+Press Ctrl-B to configure iPXE (PCI 00:03.0)...                                                                               
+
+
+Booting from ROM..c[?7l[2J
