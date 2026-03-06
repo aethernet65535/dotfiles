@@ -11,7 +11,7 @@ export EDITOR=nvim
 # --- For VNG ---
 kernel_release=$(uname -r)
 
-if [[ $kernel_release == *-rc* ]]; then
+if [[ $kernel_release == 7.0* ]]; then
     PS1='$ '
 else
     PS1='%~: >'
@@ -102,7 +102,7 @@ alias cdblog='cd $BLOG'
 alias cdmizuki='cd $MIZUKI'
 alias cdpost='cd $POST'
 ## CGDB
-alias cdcgdb='cd $WORKSPACE/src/cgdb'
+alias cdcgdb='cd $WORKSPACE/lab/cgdb'
 ## Linux
 alias cdlinux='cd $LINUX'
 alias cdmain='cd $LINUX_MAINLINE'
@@ -113,7 +113,7 @@ alias cdandroid='cd $ANDROID'
 alias cdztc='cd $ANDROID/ztc_kernel/android_gki_kernel_5.10_common'
 alias cdmelt='cd $ANDROID/melt_kernel/android_kernel_xiaomi_marble'
 ## Busybox
-alias cdbusy='cd $BUSYBOX/busybox-1.37.0'
+alias cdbusy='cd $BUSYBOX/busybox-1.37.0/debug'
 ## Labs
 alias cdxv6='cd "$XV6"'
 alias myxv6='cd "$MYXV6"'
@@ -121,13 +121,15 @@ alias cdrcore='cd "$RCORE"'
 
 # NeoVim Teleport
 alias elias='$EDITOR "$ZSH"'
-alias hconf='$EDITOR $HYPRLAND'
-alias nvimconf='$EDITOR ~/.config/nvim/'
+alias hconf='yy $HYPRLAND'
+alias nvimconf='yy ~/.config/nvim/'
 
 # Dev
 alias sudonvim='sudo -E $EDITOR'
 alias ls1='ls -1'
 alias lsl='ls -l'
+alias record='wf-recorder -r 60 -a -g "$(slurp -ro)" --file=recording.mkv'
+alias whisper-cli='/home/aethernet/65535/workspace/oss/whisper.cpp/build/bin/whisper-cli'
 
 # systemd-nspawn
 alias debianboot='sudo systemd-nspawn -D /mnt/debian --background=40'
@@ -199,3 +201,36 @@ export GTK_IM_MODULE=fcitx
 export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 export PATH=/home/aethernet/.local/bin:/home/aethernet/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/android-sdk/platform-tools:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/usr/lib/rustup/bin
+
+############
+### bean ###
+############
+# vi mode
+bindkey -v
+export KEYTIMEOUT=1
+
+# cursor beam
+cursor_block='\e[2 q'
+cursor_beam='\e[6 q'
+
+function zle-keymap-select {
+    if [[ ${KEYMAP} == vicmd ]] || [[ $1 = 'block' ]]; then
+        echo -ne $cursor_block
+    elif [[ ${KEYMAP} == main ]] ||[[ ${KEYMAP} == viins ]] || [[ $1 = 'beam' ]]; then
+        echo -ne $cursor_beam
+    fi
+}
+
+zle-line-init() {
+    echo -ne $cursor_beam
+}
+
+zle -N zle-keymap-select
+zle -N zle-line-init
+
+# vim mapping for completion
+zmodload zsh/complist
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
