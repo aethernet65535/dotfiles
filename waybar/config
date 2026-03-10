@@ -64,6 +64,7 @@
             "firefox": "",
             "mpv": "󰐹",
             "spotify": "",
+            "spotify_player": "",
         },
         "status-icons": {
             "paused": "󰏤",

@@ -16,7 +16,7 @@ opt.scrolloff = 5
 
 opt.autoread = true
 
-opt.colorcolumn = "120"
+opt.colorcolumn = "81"
 
 opt.clipboard = "unnamedplus"
 
@@ -24,7 +24,7 @@ opt.ignorecase = true
 opt.smartcase = true
 
 opt.cursorline = true
-opt.cursorcolumn = true
+-- opt.cursorcolumn = true
 
 local indent_settings_group = vim.api.nvim_create_augroup("CustomIndentSettings", { clear = true })
 

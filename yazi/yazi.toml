@@ -3,4 +3,23 @@
 show_hidden = true
 
 [preview]
-image_method = "ueberzug"
+wrap = "yes"
+tab_size = 8
+
+[opener]
+play = [
+	{ run = "mpv %s", orphan = true, for = "unix" },
+]
+edit = [
+	{ run = "$EDITOR %s", block = true, for = "unix" },
+]
+
+[open]
+rules = [
+	{ url = "*.srt", use = "edit" },
+
+    { url = "*.mkv", use = "play" },
+    { url = "*.mp4", use = "play" },
+
+    { url = "*", use = "edit" },
+]
