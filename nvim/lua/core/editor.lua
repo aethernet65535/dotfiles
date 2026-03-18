@@ -11,12 +11,15 @@ opt.expandtab = true
 opt.smartindent = true
 
 opt.wrap = true
+opt.linebreak = true
+opt.textwidth = 72
+opt.colorcolumn = "73"
+opt.formatoptions:append("m")
+opt.formatoptions:append("B")
 
 opt.scrolloff = 5
 
 opt.autoread = true
-
-opt.colorcolumn = "81"
 
 opt.clipboard = "unnamedplus"
 
@@ -31,12 +34,14 @@ local indent_settings_group = vim.api.nvim_create_augroup("CustomIndentSettings"
 -- low-level
 vim.api.nvim_create_autocmd("FileType", {
     group = indent_settings_group,
-    pattern = { "c", "cpp" },
+    pattern = { "c", "cpp", "rst" },
     callback = function()
         vim.opt_local.tabstop = 8
         vim.opt_local.shiftwidth = 8
         vim.opt_local.softtabstop = 8
         vim.opt_local.expandtab = false
+        vim.opt_local.textwidth = 80
+        vim.opt_local.colorcolumn = "81"
     end,
 })
 
