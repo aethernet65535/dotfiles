@@ -17,10 +17,10 @@ return {
                 lualine_c = {
                     {
                         "filename",
-                        path = 3,   -- 0: filename-only,
-                                    -- 1: relative path
-                                    -- 2: absolute path
-                                    -- 3: absolute but home = ~
+                        path = 3, -- 0: filename-only,
+                        -- 1: relative path
+                        -- 2: absolute path
+                        -- 3: absolute but home = ~
                     },
                 },
             },

@@ -31,7 +31,7 @@ local indent_settings_group = vim.api.nvim_create_augroup("CustomIndentSettings"
 -- low-level
 vim.api.nvim_create_autocmd("FileType", {
     group = indent_settings_group,
-    pattern = { "c", "cpp",},
+    pattern = { "c", "cpp" },
     callback = function()
         vim.opt_local.tabstop = 8
         vim.opt_local.shiftwidth = 8
@@ -43,7 +43,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- others
 vim.api.nvim_create_autocmd("FileType", {
     group = indent_settings_group,
-    pattern = { "lua", "sh", },
+    pattern = { "lua", "sh" },
     callback = function()
         vim.opt_local.tabstop = 4
         vim.opt_local.shiftwidth = 4
