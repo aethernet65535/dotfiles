@@ -1,0 +1,47 @@
+From f1cddb5157e9fada30867a955f5fc069229f7b44 Mon Sep 17 00:00:00 2001
+From: Liew Rui Yan <aethernet65535@gmail.com>
+Date: Thu, 27 Aug 2026 19:00:11 +0800
+Subject: [RFC PATCH] mm/damon/core: invalid zero-region target
+
+Trying to apply a target with zero-region has no effect.  Therefore,
+such targets are treated as invalid targets.
+
+Signed-off-by: Liew Rui Yan <aethernet65535@gmail.com>
+---
+ mm/damon/core.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 644daf5a1656..7959118aad11 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -3216,6 +3216,17 @@ static void damos_trace_stat(struct damon_ctx *c, struct damos *s)
+ 	trace_call__damos_stat_after_apply_interval(cidx, sidx, &s->stat);
+ }
+ 
++static bool damon_is_valid_target(struct damon_ctx *c, struct damon_target *t)
++{
++	if (damon_nr_regions(t) == 0)
++		return false;
++
++	if (c->ops.target_valid && !c->ops.target_valid(t))
++		return false;
++
++	return true;
++}
++
+ static void kdamond_apply_schemes(struct damon_ctx *c)
+ {
+ 	struct damon_target *t;
+@@ -3241,7 +3252,7 @@ static void kdamond_apply_schemes(struct damon_ctx *c)
+ 	max_region_sz = damon_region_sz_limit(c);
+ 	mutex_lock(&c->walk_control_lock);
+ 	damon_for_each_target(t, c) {
+-		if (c->ops.target_valid && c->ops.target_valid(t) == false)
++		if (!damon_is_valid_target(c, t))
+ 			continue;
+ 		damos_apply_target(c, t, max_region_sz);
+ 	}
+-- 
+2.55.0
+
