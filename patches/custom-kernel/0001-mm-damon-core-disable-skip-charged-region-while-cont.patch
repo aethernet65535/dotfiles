@@ -1,0 +1,60 @@
+From fcf031f3898f3a064f4a2f17746a8804adb42b0b Mon Sep 17 00:00:00 2001
+From: Liew Rui Yan <aethernet65535@gmail.com>
+Date: Mon, 31 Aug 2026 13:50:31 +0800
+Subject: [EXPERIMENTAL] mm/damon/core: disable skip-charged-region while
+ context is prioritizable
+
+Signed-off-by: Liew Rui Yan <aethernet65535@gmail.com>
+---
+ mm/damon/core.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 644daf5a1656..e13a154aa4b9 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -2569,6 +2569,17 @@ static bool damos_quota_is_full(struct damos_quota *quota,
+ 	return quota->esz - quota->charged_sz < min_region_sz;
+ }
+ 
++static bool damon_is_prioritizable(struct damon_ctx *c, struct damos *s)
++{
++	if (!damos_quota_is_set(&s->quota))
++		return false;
++
++	if (!c->ops.get_scheme_score)
++		return false;
++
++	return true;
++}
++
+ static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
+ 		struct damon_region *r, struct damos *s)
+ {
+@@ -2627,7 +2638,8 @@ static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
+ 		quota->total_charged_ns += timespec64_to_ns(&end) -
+ 			timespec64_to_ns(&begin);
+ 		damos_charge_quota(quota, sz, sz_applied);
+-		if (damos_quota_is_full(quota, c->min_region_sz)) {
++		if (!damon_is_prioritizable(c, s) &&
++				damos_quota_is_full(quota, c->min_region_sz)) {
+ 			quota->charge_target_from = t;
+ 			quota->charge_addr_from = r->ar.end;
+ 		}
+@@ -2658,8 +2670,11 @@ static void damon_do_apply_schemes(struct damon_ctx *c,
+ 		if (damos_quota_is_full(quota, c->min_region_sz))
+ 			continue;
+ 
+-		if (damos_skip_charged_region(t, r, s, c->min_region_sz))
+-			continue;
++		if (!damon_is_prioritizable(c, s)) {
++			if (damos_skip_charged_region(t, r, s,
++					c->min_region_sz))
++				continue;
++		}
+ 
+ 		if (s->max_nr_snapshots &&
+ 				s->max_nr_snapshots <= s->stat.nr_snapshots)
+-- 
+2.55.0
+

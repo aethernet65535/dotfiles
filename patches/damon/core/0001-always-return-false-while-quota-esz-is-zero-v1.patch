@@ -1,0 +1,32 @@
+From 96a6834740d049134bfb1c17bb726cfd1a732e2d Mon Sep 17 00:00:00 2001
+From: Liew Rui Yan <aethernet65535@gmail.com>
+Date: Tue, 1 Sep 2026 08:57:53 +0800
+Subject: [PATCH] mm/damon/core: always return false while quota->esz is zero
+
+After setting goal_tuner to 'temporal', if the goal is satisfied,
+quota->esz will be set to zero.  In this case, damos_quota_is_full()
+will always return 'true', even if no regions have been tried at all.
+
+Fix it by always return 'false' while quota->esz is zero.
+
+Signed-off-by: Liew Rui Yan <aethernet65535@gmail.com>
+---
+ mm/damon/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mm/damon/core.c b/mm/damon/core.c
+index 644daf5a1656..c9f220f2c2f6 100644
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -2560,6 +2560,8 @@ static bool damos_quota_is_full(struct damos_quota *quota,
+ {
+ 	if (!damos_quota_is_set(quota))
+ 		return false;
++	if (!quota->esz)
++		return true;
+ 	if (quota->charged_sz >= quota->esz)
+ 		return true;
+ 	/*
+-- 
+2.55.0
+
