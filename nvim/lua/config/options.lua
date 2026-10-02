@@ -13,7 +13,7 @@ opt.expandtab = true
 opt.smartindent = true
 
 opt.wrap = true
-opt.linebreak = true
+opt.linebreak = false
 opt.textwidth = 72
 opt.colorcolumn = "73"
 opt.formatoptions:append("m")
@@ -32,7 +32,7 @@ opt.cursorline = true
 
 local indent_settings_group = vim.api.nvim_create_augroup("CustomIndentSettings", { clear = true })
 
--- Code-Style
+-- Linux
 vim.api.nvim_create_autocmd("FileType", {
     group = indent_settings_group,
     pattern = { "c", "cpp", "rst" },
@@ -43,6 +43,20 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.expandtab = false
         vim.opt_local.textwidth = 80
         vim.opt_local.colorcolumn = "81"
+    end,
+})
+
+-- Python
+vim.api.nvim_create_autocmd("FileType", {
+    group = indent_settings_group,
+    pattern = { "python" },
+    callback = function()
+        vim.opt_local.tabstop = 4
+        vim.opt_local.shiftwidth = 4
+        vim.opt_local.softtabstop = 4
+        vim.opt_local.expandtab = true
+        vim.opt_local.textwidth = 87
+        vim.opt_local.colorcolumn = "88"
     end,
 })
 

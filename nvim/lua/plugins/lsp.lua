@@ -15,7 +15,11 @@ return {
         opts = {
             servers = {
                 clangd = {
-                    cmd = { "clangd", "--background-index", "--clang-tidy" },
+                    cmd = { "clangd",
+                        "--background-index",
+                        "--clang-tidy",
+                        "--header-insertion=never",
+                    },
                 },
                 ["kotlin-language-server"] = {},
                 pyright = {},
